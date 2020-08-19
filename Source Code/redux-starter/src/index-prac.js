@@ -2,6 +2,8 @@
 import {compose, pipe} from '/lodash/fp';
 import { indexOf } from 'lodash';
 
+// Functional programming  - is the process of building software by composing pure functions,
+
 // first class citizens
 // assign function as variable or pass it as an argument 
 // can treat function in js like anyother variable.
@@ -18,7 +20,7 @@ function greet(fnMessage){
 
 greet(sayHello);
 
-//higher order functions////////
+//higher order functions//////// - takes a function as an argument.
 //an example
 let numbers = [1,2,3];
 
