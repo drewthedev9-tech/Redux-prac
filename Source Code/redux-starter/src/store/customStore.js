@@ -1,5 +1,9 @@
 function createStore(){
 
     let state;
-    return
+    return{
+        state
+    }
 }
+
+export default createStore();
