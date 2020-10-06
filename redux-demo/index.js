@@ -1,6 +1,10 @@
 const redux = require('redux');
+const reduxLogger = require('redux-logger'); 
 const createStore = redux.createStore;
+const logger = reduxLogger.createLogger();
 const combineReducers = redux.combineReducers
+// used to apply middleware to redux
+const applyMiddleware = redux.applyMiddleware
 
 // action is an object with a type property.
 // action creater - is a function that returns a action
@@ -71,10 +75,10 @@ const rootReducer = combineReducers({
 });
 // Store///
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, applyMiddleware(logger));
 console.log('initial state', store.getState());
 // listener , anytime state updates we log to the console.
-const unsubscribe = store.subscribe(()=> console.log('updated state', store.getState()));
+const unsubscribe = store.subscribe(()=> {});
 store.dispatch(buyCake())
 store.dispatch(buyCake())
 store.dispatch(buyCake())
