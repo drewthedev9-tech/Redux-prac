@@ -1,3 +1,6 @@
+const redux = require('redux')
+const createStore = redux.createStore
+
 const initialState = {
     loadig: false,
     users: [],
@@ -55,3 +58,5 @@ const reducer =(state= initialState, action)=>{
 
     
 }
+
+const store = createStore(reducer)
