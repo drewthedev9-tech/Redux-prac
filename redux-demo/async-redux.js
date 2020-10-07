@@ -1,62 +1,89 @@
-const redux = require('redux')
+ const redux = require('redux')
+const thunkMiddleware = require('redux-thunk').default
+const axios = require('axios')
 const createStore = redux.createStore
+const applyMiddleware = redux.applyMiddleware
 
 const initialState = {
-    loadig: false,
-    users: [],
-    error: ''
+  loading: false,
+  users: [],
+  error: ''
 }
-
 // action types
-const FETCH_USERS_REQUEST = 'FECTH_USERS_REQUEST'
-const FETCH_USERS_SUCCESS = 'FECTH_USERS_SUCCESS'
+const FETCH_USERS_REQUEST = 'FETCH_USERS_REQUEST'
+const FETCH_USERS_SUCCESS = 'FETCH_USERS_SUCCESS'
 const FETCH_USERS_FAILURE = 'FETCH_USERS_FAILURE'
 
-// action creators
-const fetchusersRequest = ()=>{
-    return{
-        type: FETCH_USERS_REQUEST
-    }
+// actions creators
+const fetchUsersRequest = () => {
+  return {
+    type: FETCH_USERS_REQUEST
+  }
 }
 
-const fetchUsersSuccess = users=>{
-    return{
-        type: FETCH_USERS_REQUEST,
-        payload: users
-    }
+const fetchUsersSuccess = users => {
+  return {
+    type: FETCH_USERS_SUCCESS,
+    payload: users
+  }
 }
 
-const fetchUsersFailure = error=>{
-    return{
-        type: FETCH_USERS_REQUEST,
-        payload: error
-    }
+const fetchUsersFailure = error => {
+  return {
+    type: FETCH_USERS_FAILURE,
+    payload: error
+  }
 }
 
-const reducer =(state= initialState, action)=>{
-    // Based o action type we return a new state.
-    switch(action.type){
-        case FETCH_USERS_REQUEST:
-        return{
-            ...state,
-            loading: true
+
+// action cretor that has dispatch that allows for this
+// action type to return a function instead of an action made possible 
+// becauseof thunk middleware.
+const fetchUsers = () => {
+    return async  function (dispatch) {
+        try{
+            dispatch(fetchUsersRequest())
+      response = await axios.get('https://jsonplaceholder.typicode.com/users')
+      const users = response.data.map(user => user.id)
+      dispatch(fetchUsersSuccess(users))
+        }catch(error){
+            dispatch(fetchUsersFailure(error.message))
         }
-        case FETCH_USERS_SUCCESS:
-        return{
-            loading: false,
-            users: acion.payload,
-            error:''
-        }
-        // action.payload is from the action creators.
-        case FETCH_USERS_FAILURE:
-            return{
-                loading: false,
-                users:[],
-                error:action.payload
-            }
     }
+  }
 
-    
+
+// Reducer //////
+const reducer = (state = initialState, action) => {
+  console.log(action.type)
+  switch (action.type) {
+    case FETCH_USERS_REQUEST:
+      return {
+        ...state,
+        loading: true
+      }
+    case FETCH_USERS_SUCCESS:
+      return {
+        loading: false,
+        users: action.payload,
+        error: ''
+      }
+    case FETCH_USERS_FAILURE:
+      return {
+        loading: false,
+        users: [],
+        error: action.payload
+      }
+  }
 }
 
-const store = createStore(reducer)
+
+// store/////
+const store = createStore(reducer, applyMiddleware(thunkMiddleware))
+// subscribing to store
+store.subscribe(()=>{console.log(store.getState())})
+// dispatch async action creator for async calls above
+store.dispatch(fetchUsers())
+
+
+
